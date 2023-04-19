@@ -25,6 +25,7 @@ interface LoginSchema {
 interface RegisterSchema {
     name: string;
     email: string;
+    confirmPassword: string;
     password: string;
     address: string;
 }
@@ -39,6 +40,7 @@ class Middleware {
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
+        confirmPassword: Joi.string().required(),
         address: Joi.string().required()
     });
 
