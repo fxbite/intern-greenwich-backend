@@ -7,6 +7,12 @@ import { HTTP_BAD_REQUEST } from '../constants/http_status';
 import bcrypt from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
+interface Payload extends Pick<UserType, "address" | "name" | "email" | "isAdmin"> {
+    id: string,
+    access_token: string
+    expire: string
+}
+
 class UserController {
     router = Router();
 
@@ -64,10 +70,11 @@ class UserController {
     };
 
     // Generate jwt
-    private generateToken(user: UserType) {
+    private generateToken(user: any): Payload {
         const token = sign({ email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET!, { expiresIn: '35d' });
 
         return {
+            id: user._id,
             email: user.email,
             name: user.name,
             address: user.address,
