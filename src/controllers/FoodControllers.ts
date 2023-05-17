@@ -14,10 +14,15 @@ class FoodController {
     private initRoutes() {
         this.router.get('/seed', this.addSampleFoods);
         this.router.get('/tags', this.countTagsByCategory);
-        this.router.get('/:foodId', this.getFoodById);
+        this.router.route('/:foodId') 
+            .get(this.getFoodById)
+            .patch(this.updateFood)
+            .delete(this.deleteFood)
         this.router.get('/tag/:tagName', this.getAllFoodByTag);
         this.router.get('/search/:searchTerm', this.searchFood);
-        this.router.get('/', this.getAllFood);
+        this.router.route('/')
+            .get(this.getAllFood)
+            .post(this.createFood)
     }
 
     // Add sample fooods
@@ -29,6 +34,27 @@ class FoodController {
         }
         await Food.create(sample_foods);
         middleware.returnData(res, 'Seed Is Done!');
+    }
+
+    // Create food
+    private async createFood(req: Request, res: Response) {
+        const newFood = new Food(req.body)
+        const food = await newFood.save()
+        middleware.returnData(res, food);
+    }
+
+    // Update food
+    private async updateFood(req: Request, res: Response) {
+        const foodId = req.params.foodId
+        const updatedFood = await Food.findOneAndUpdate({ id: foodId}, { $set: req.body })
+        middleware.returnData(res, updatedFood);
+    }
+
+    // Delete food
+    private async deleteFood(req: Request, res: Response) {
+        const foodId = req.params.foodId
+        await Food.findByIdAndDelete(foodId)
+        middleware.returnData(res, 'Delete successfully');
     }
 
     // Get All Food (with sample foods)

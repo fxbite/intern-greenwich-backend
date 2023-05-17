@@ -17,6 +17,7 @@ class OrderController {
         this.router.post('/create', this.createOrder);
         this.router.get('/track/:id', this.trackOrderByUser);
         this.router.get('/history/:id', this.getOrderHistoryByUser);
+        this.router.get('/', this.getOrder)
     }
 
     // Create new order
@@ -35,6 +36,12 @@ class OrderController {
     // Track order by user
     private async trackOrderByUser(req: Request, res: Response) {
         const order = await Order.findOne({ user: req.params.id, status: OrderStatus.NEW });
+        middleware.returnData(res, order);
+    }
+
+    // 
+    private async getOrder(req: Request, res: Response) {
+        const order = await Order.find()
         middleware.returnData(res, order);
     }
 
